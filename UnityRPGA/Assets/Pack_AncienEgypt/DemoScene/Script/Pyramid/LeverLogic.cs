@@ -49,7 +49,7 @@ public class LeverLogic : MonoBehaviour {
 			LeverAnimator.SetTrigger("ActivateLever");
 			StatueAnimatorToEnable.SetTrigger("ActivateStatue");
 
-			this.audio.Play();
+			this.GetComponent<AudioSource>().Play();
 			Hide ();
 		}
 	}
@@ -60,11 +60,11 @@ public class LeverLogic : MonoBehaviour {
 
 
 	void Show(){
-		PopUp.renderer.enabled =true;
+		PopUp.GetComponent<Renderer>().enabled =true;
 	}
 
 	void Hide(){
-		PopUp.renderer.enabled =false;
+		PopUp.GetComponent<Renderer>().enabled =false;
 		// hide
 	}
 

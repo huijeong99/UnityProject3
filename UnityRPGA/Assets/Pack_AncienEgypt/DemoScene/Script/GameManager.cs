@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
 
 		
 
-			this.audio.volume = 0.7f;
+			this.GetComponent<AudioSource>().volume = 0.7f;
 
 			/*if(this.audio.clip != MainMusic){
 				this.audio.clip = MainMusic;
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour {
 
 		if(level == 2){
 
-			this.audio.volume = 0.3f;
+			this.GetComponent<AudioSource>().volume = 0.3f;
 			if(this.HouseTypeTarget == HouseTypesEnum.BigHouse)
 				GameObject.Find("_First Person Controller").transform.position = BigHouseSpawn.position;
 			else if(this.HouseTypeTarget == HouseTypesEnum.MedHouse)

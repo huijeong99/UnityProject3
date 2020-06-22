@@ -10,7 +10,7 @@ public class SpikesCeiling : MonoBehaviour {
 
 		if(col.gameObject.tag == "Player" && On){
 			On = false;
-			this.audio.Play();
+			this.GetComponent<AudioSource>().Play();
 			this.SpikesCeilingAnimator.SetTrigger("Enable");
 			Destroy(this, 10f);
 

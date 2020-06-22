@@ -18,7 +18,7 @@ public class SarcophagusTrigger : MonoBehaviour {
 		if(canOpen){
 
 			canOpen = false;
-			this.audio.Play();
+			this.GetComponent<AudioSource>().Play();
 			Sarcophagus.SetBool("Open", true);
 			Destroy(this.gameObject, 10f);
 		}
