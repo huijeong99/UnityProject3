@@ -10,16 +10,27 @@ public class PlayerCtrl : MonoBehaviour
     public VariableJoystick joystick;
     public GameObject player;
 
+    enum State
+    {
+        Idle, Walk, Run, Attack1, Attack2, Hit, Die
+    }
+
+    State state;
+    Animator Anim;
+
     // Start is called before the first frame update
     void Start()
     {
+        state = State.Idle;
         margin = new Vector2(0, 0);
+        Anim=GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Move();
+        Animation();
     }
 
     private void Move()
@@ -32,9 +43,38 @@ public class PlayerCtrl : MonoBehaviour
             h = joystick.Horizontal;
             v = joystick.Vertical;
         }
+        
 
         Vector3 dir = new Vector3(h, 0, v);//3차원 이동
 
         transform.position += dir * speed * Time.deltaTime;
+    }
+
+    private void Animation()
+    {
+        switch (state)
+        {
+            case State.Idle:
+                Anim.SetTrigger("Idle");
+                break;
+            case State.Walk:
+                Anim.SetTrigger("Walk");
+                break;
+            case State.Run:
+                Anim.SetTrigger("Run");
+                break;
+            case State.Attack1:
+                Anim.SetTrigger("Attack1");
+                break;
+            case State.Attack2:
+                Anim.SetTrigger("Attack2");
+                break;
+            case State.Hit:
+                Anim.SetTrigger("Hit");
+                break;
+            case State.Die:
+                Anim.SetTrigger("Die");
+                break;
+        }
     }
 }
