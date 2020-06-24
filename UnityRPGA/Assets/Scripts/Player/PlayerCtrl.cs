@@ -10,6 +10,9 @@ public class PlayerCtrl : MonoBehaviour
     public VariableJoystick joystick;
     public GameObject player;
 
+    public float Rspeed = 150;
+    float angleX;
+
     enum State
     {
         Idle, Walk, Run, Attack1, Attack2, Hit, Die
@@ -30,8 +33,10 @@ public class PlayerCtrl : MonoBehaviour
     void Update()
     {
         Move();
+        Rotate();
         Animation();
     }
+
 
     private void Move()
     {
@@ -48,6 +53,21 @@ public class PlayerCtrl : MonoBehaviour
         Vector3 dir = new Vector3(h, 0, v);//3차원 이동
 
         transform.position += dir * speed * Time.deltaTime;
+    }
+
+
+    private void Rotate()
+    {
+        float h = Input.GetAxis("Mouse X");
+
+        if (h == 0)
+        {
+            h = joystick.Horizontal;
+        }
+
+        //회전각도를 직접 제어
+        angleX += h * Rspeed * Time.deltaTime;
+        transform.eulerAngles = new Vector3(0, angleX, 0);
     }
 
     private void Animation()
