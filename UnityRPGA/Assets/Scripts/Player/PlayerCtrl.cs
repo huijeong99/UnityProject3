@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class PlayerCtrl : MonoBehaviour
     public Vector2 margin;  //뷰포트 좌표
     public VariableJoystick joystick;
 
-    public float Rspeed = 150;
+    public float Rspeed = 180;
     float angleX;
 
     float h;    //x좌표
@@ -30,9 +31,13 @@ public class PlayerCtrl : MonoBehaviour
         Idle, Walk, Run, Attack1, Attack2, Hit, Die
     }
 
-   public List<GameObject> playerChar = new List<GameObject>();  //조정할 플레이어 모델
+    public List<GameObject> playerChar = new List<GameObject>();  //조정할 플레이어 모델
     State state;            //플레이어 상태
     Animator Anim;          //플레이어 애니메이션
+
+    public RectTransform backGround;    //조이스틱 백그라운드
+    public RectTransform handle;      //조이스틱 핸들부분
+    float distance;                   //조이스틱이 움직인 정도
 
     // Start is called before the first frame update
     void Start()
@@ -41,16 +46,20 @@ public class PlayerCtrl : MonoBehaviour
         cc = GetComponent<CharacterController>();   //캐릭터 컨트롤러 가져오기
         state = State.Idle; //플레이어 초기상태 가져오기
 
-        //현재 활성화되어있는 플레이어 찾기
-       
-
         //현재 활성화 되어있는 플레이어의 애니메이터만 가져오기
-       // Anim = playerChar.GetComponent<Animator>();
+        for (int i = 0; i < playerChar.Count; i++)
+        {
+            if (playerChar[i].activeSelf == true)
+            {
+                Anim = playerChar[i].GetComponent<Animator>();
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+
         Move();     //움직임 처리
         Rotate();   //회전 처리
         FindAnimation();    //애니메이션 찾기
@@ -59,19 +68,24 @@ public class PlayerCtrl : MonoBehaviour
 
     private void Move()
     {
+        
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
+        distance = 1;//조이스틱을 사용하지 않을 때 기본적으로 1의 최고속도로 움직인다
 
         if (h == 0 && v == 0)
         {
             h = joystick.Horizontal;
             v = joystick.Vertical;
+            //조이스틱을 당긴 정도에 따라 0~1사이의 값을 출력함(50은 조이스틱의 반지름)
+            distance = Vector2.Distance(backGround.position, handle.position) / 50;
         }
+
 
         Vector3 dir = new Vector3(h, 0, v);//3차원 이동
 
         dir = Camera.main.transform.TransformDirection(dir);
-        // transform.position += dir * speed * Time.deltaTime;
+        //transform.position += dir * speed * Time.deltaTime;
 
         if (cc.collisionFlags == CollisionFlags.Below)
         {
@@ -90,22 +104,21 @@ public class PlayerCtrl : MonoBehaviour
             velocityY = jumpPower;
         }
 
-        cc.Move(dir * speed * Time.deltaTime);
-
+        cc.Move(dir * speed * distance * Time.deltaTime);
     }
 
     //회전
     private void Rotate()
     {
-        float h = Input.GetAxis("Mouse X");
+        float rot = Input.GetAxis("Mouse X");
 
-        if (h == 0)
+        if (rot == 0)
         {
-            h = joystick.Horizontal;
+            rot = joystick.Horizontal;
         }
 
         //회전각도를 직접 제어
-        angleX += h * Rspeed * Time.deltaTime;
+        angleX += rot * Rspeed * Time.deltaTime;
 
         transform.eulerAngles = new Vector3(0, angleX, 0);
     }
@@ -113,20 +126,32 @@ public class PlayerCtrl : MonoBehaviour
     //애니메이션 찾기
     private void FindAnimation()
     {
-        //걷기 전환
+        //기본전환
+        if (distance == 0)
+        {
+            state = State.Idle;
+        }
 
+        //걷기 전환
+        else if (distance < 0.5)
+        {
+            state = State.Walk;
+        }
 
         //뛰기 전환
+        else if (distance >= 0.5)
+        {
+            state = State.Run;
+        }
 
-
-        //공격1
-        if (Input.GetKeyDown(KeyCode.Z))
+        //공격1(숫자 1키)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             state = State.Attack1;
         }
 
-        //공격2
-        if (Input.GetKeyDown(KeyCode.X))
+        //공격2(숫자 2키)
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             state = State.Attack2;
         }
