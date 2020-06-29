@@ -4,14 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+struct PInfo
+{
+    public int lv;
+    public int maxExp;
+    public int currExp;
+    public int attack;
+    public int defend;
+    public float sp;
+}
+
 public class PlayerCtrl : MonoBehaviour
 {
-    //플레이어 움직임
-    public float speed = 5.0f;
-    public Vector2 margin;  //뷰포트 좌표
-    public VariableJoystick joystick;
+    PInfo playerInfo;   //플레이어 정보
 
-    public float Rspeed = 180;
+    //플레이어 움직임
+    public Vector2 margin;  //뷰포트 좌표
+
+    public VariableJoystick joystick;
+    public RectTransform backGround;    //조이스틱 백그라운드
+    public RectTransform handle;      //조이스틱 핸들부분
+    float distance;                   //조이스틱이 움직인 정도
+
+    public float Rspeed = 180;  //카메라 회전속도
     float angleX;
 
     float h;    //x좌표
@@ -30,21 +45,20 @@ public class PlayerCtrl : MonoBehaviour
     {
         Idle, Walk, Run, Attack1, Attack2, Hit, Die
     }
+    State state;            //플레이어 기본 상태
+    enum DebuffState
+    {
+        Bleedinig, Infection, Fear, Burn, Bind
+    }
+    DebuffState debuff;     //플레이어 상태이상
 
     public List<GameObject> playerChar = new List<GameObject>();  //조정할 플레이어 모델
-    State state;            //플레이어 상태
     Animator Anim;          //플레이어 애니메이션
 
-    public RectTransform backGround;    //조이스틱 백그라운드
-    public RectTransform handle;      //조이스틱 핸들부분
-    float distance;                   //조이스틱이 움직인 정도
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        margin = new Vector2(0, 0);
-        cc = GetComponent<CharacterController>();   //캐릭터 컨트롤러 가져오기
-        state = State.Idle; //플레이어 초기상태 가져오기
+        setPlayer sPlayer=null;  //임의적으로 플레이어 데이터를 가져오기 위해 가져올 클래스
+        sPlayer = new Knight();
 
         //현재 활성화 되어있는 플레이어의 애니메이터만 가져오기
         for (int i = 0; i < playerChar.Count; i++)
@@ -52,14 +66,43 @@ public class PlayerCtrl : MonoBehaviour
             if (playerChar[i].activeSelf == true)
             {
                 Anim = playerChar[i].GetComponent<Animator>();
+        
+                //활성화된 플레이어의 이름에 따라 플레이어 정보 불러오기
+                switch (playerChar[i].name)
+                {
+                    case "knight"://대문자에 주의할것
+                        sPlayer = new Knight();
+                        break;
+                    case "Magician":
+                        sPlayer = new Magician();
+                        break;
+                    case "Priest":
+                        sPlayer = new Priest();
+                        break;
+                }
             }
         }
+       
+        //사전에 정해진 플레이어 데이터 삽입
+        playerInfo.lv = sPlayer.getlv();
+        playerInfo.maxExp = sPlayer.getmaxExp();
+        playerInfo.currExp = sPlayer.getcurrExp();
+        playerInfo.attack = sPlayer.getattack();
+        playerInfo.defend = sPlayer.getdefend();
+        playerInfo.sp = sPlayer.getsp();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        margin = new Vector2(0, 0);
+        cc = GetComponent<CharacterController>();   //캐릭터 컨트롤러 가져오기
+        state = State.Idle; //플레이어 초기상태 가져오기
     }
 
     // Update is called once per frame
     void Update()
     {
-
         Move();     //움직임 처리
         Rotate();   //회전 처리
         FindAnimation();    //애니메이션 찾기
@@ -68,7 +111,6 @@ public class PlayerCtrl : MonoBehaviour
 
     private void Move()
     {
-        
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
         distance = 1;//조이스틱을 사용하지 않을 때 기본적으로 1의 최고속도로 움직인다
@@ -87,6 +129,8 @@ public class PlayerCtrl : MonoBehaviour
         dir = Camera.main.transform.TransformDirection(dir);
         //transform.position += dir * speed * Time.deltaTime;
 
+
+        //점프안됨 수정필요함
         if (cc.collisionFlags == CollisionFlags.Below)
         {
             velocityY = 0;
@@ -104,7 +148,7 @@ public class PlayerCtrl : MonoBehaviour
             velocityY = jumpPower;
         }
 
-        cc.Move(dir * speed * distance * Time.deltaTime);
+        cc.Move(dir * playerInfo.sp * distance * Time.deltaTime);
     }
 
     //회전
