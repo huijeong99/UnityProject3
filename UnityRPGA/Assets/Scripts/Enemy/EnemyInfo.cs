@@ -2,27 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//몬스터 정보 구조체
+struct EInfo
+{
+    public int HP;
+    public int attack;
+    public int defend;
+    public int castingTime;
+    public float distance;     //플레이어 인식범위
+
+}
+
+enum enemyType
+{
+    Basic, Beast, Undead, Ghost
+}
+
 public abstract class EnemyInfo : MonoBehaviour
 {
-    public abstract EnemyInfo Clone();
-}
+   
+    //static enemyType monsterType;       //몬스터 타입 지정(한 번 지정된 이후 변하지 않으므로 static으로 선언)
+    EInfo eInfo;            //몬스터 정보 구조체 불러오기
+    static int monsterType=(int)enemyType.Basic;
 
-public class DragonInfo : EnemyInfo
-{
-    public override EnemyInfo Clone()
-    {
-        return (DragonInfo)this.MemberwiseClone();
-        //MemberwiseClone을 사용할 시 별도의 생성자를 통한 인스턴스를 생성하는 것이 아닌
-        //기존의 객체를 복사하게 된다
-    }
-}
+    //적 정보 getset
+    public int getHP(){return eInfo.HP;}
+    public int getAttack(){return eInfo.attack;}
+    public int getDefend(){return eInfo.defend;}
+    public int getCastingTime(){return eInfo.castingTime;}
+    public float getDistance(){return eInfo.distance;}
 
-public class EnemyFactory : MonoBehaviour
-{
-    private static List<EnemyInfo> enemyInfo = new List<EnemyInfo>();
-
-    public EnemyFactory()
-    {
-        enemyInfo.Add(new DragonInfo());
-    }
+    public int getMType() { return monsterType; }
 }
