@@ -12,6 +12,7 @@ struct PInfo
     public int attack;
     public int defend;
     public float sp;
+
 }
 
 public class PlayerCtrl : MonoBehaviour
@@ -158,7 +159,7 @@ public class PlayerCtrl : MonoBehaviour
 
         if (rot == 0)
         {
-            rot = joystick.Horizontal;
+            rot = joystick.Horizontal;//키보드를 사용하지 않을 때 조이스틱 움직임에 따라 캐릭터가 자동으로 회전함
         }
 
         //회전각도를 직접 제어
@@ -231,4 +232,10 @@ public class PlayerCtrl : MonoBehaviour
                 break;
         }
     }
+
+    //지금은 안씀
+    //public int playerLvSetting()
+    //{
+    //    return playerInfo.lv;
+    //}
 }
