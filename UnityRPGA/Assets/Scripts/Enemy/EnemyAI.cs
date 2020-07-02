@@ -97,6 +97,7 @@ public class EnemyAI : MonoBehaviour
                 break;
             case State.Attack:
 
+
                 break;
             case State.Hit:
                 break;
