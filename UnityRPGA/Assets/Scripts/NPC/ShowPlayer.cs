@@ -6,6 +6,7 @@ using UnityEngine;
 public class ShowPlayer : MonoBehaviour
 {
     [SerializeField] Transform player;
+    Quaternion StartRot;
     [SerializeField] float distance = 2.0f;   //플레이어 인식범위
     float speed = 5.0f;                       //회전속도
 
@@ -13,6 +14,7 @@ public class ShowPlayer : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player").transform;
+        StartRot =transform.rotation;
     }
 
     // Update is called once per frame
@@ -36,7 +38,8 @@ public class ShowPlayer : MonoBehaviour
         //멀어지면 처음 방향으로 다시 회전
         else
         {
-            Quaternion rotate = Quaternion.Euler(0, 0, 0);  //되돌릴 회전각
+            //Quaternion rotate = Quaternion.Euler(0, 0, 0);  //되돌릴 회전각
+            Quaternion rotate = StartRot;  //되돌릴 회전각
 
             transform.rotation = Quaternion.Lerp(transform.rotation, rotate, Time.deltaTime * 3.0f);
         }

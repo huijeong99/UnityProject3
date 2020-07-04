@@ -18,6 +18,7 @@ struct PInfo
 public class PlayerCtrl : MonoBehaviour
 {
     PInfo playerInfo;   //플레이어 정보
+    public Transform SponPosition;     //플레이어가 스폰될 초기위치
 
     //플레이어 움직임
     public Vector2 margin;  //뷰포트 좌표
@@ -99,6 +100,7 @@ public class PlayerCtrl : MonoBehaviour
         margin = new Vector2(0, 0);
         cc = GetComponent<CharacterController>();   //캐릭터 컨트롤러 가져오기
         state = State.Idle; //플레이어 초기상태 가져오기
+        transform.position = SponPosition.position;      //스폰 위치에 가져오기
     }
 
     // Update is called once per frame

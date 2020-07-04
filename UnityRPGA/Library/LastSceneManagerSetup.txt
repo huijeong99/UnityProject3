@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/Village2/StartVillage.unity
+- path: Assets/Scenes/Forest/Forest.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
