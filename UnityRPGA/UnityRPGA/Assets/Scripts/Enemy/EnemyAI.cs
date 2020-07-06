@@ -12,7 +12,20 @@ public class EnemyAI : MonoBehaviour
 
     NavMeshAgent agent;
 
-    Animator enemyAnim;         //애니메이터 받아오기
+    //Animator enemyAnim;         //애니메이터 받아오기
+    //레거시 애니메이션으로 처리한다
+    public AnimationClip idle;
+    public AnimationClip trace;
+    public AnimationClip returned;
+    public AnimationClip hit1;
+    public AnimationClip hit2;
+    public AnimationClip casting;
+    public AnimationClip attack1;
+    public AnimationClip attack2;
+    public AnimationClip attack3;
+    public AnimationClip die;
+
+    Animation anime;
 
     float currCastingTime=0;          //캐스팅 시간
 
@@ -37,7 +50,10 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();   //네비메시 가져오기
         agent.enabled = false;                  //Move상태에서만 이동해야 하기 때문에 기본적으로 비활성화해둔다
 
-        enemyAnim = GetComponent<Animator>();   
+        //enemyAnim = GetComponent<Animator>();   
+        anime = GetComponent<Animation>();
+        anime.clip = idle;
+        anime.Play();
 
         state = State.Idle;
     }
@@ -59,8 +75,9 @@ public class EnemyAI : MonoBehaviour
         switch (state)
         {
             case State.Idle:
-                enemyAnim.SetTrigger("Idle");
-                print(enemyInfo.getDistance());
+                //enemyAnim.SetTrigger("Idle");
+                anime.CrossFade(idle.name, 0.3f);
+                //print(enemyInfo.getDistance());
 
                 //플레이어가 일정 거리 내에 존재할 경우 추적한다
                 if (Vector3.Distance(player.transform.position, transform.position) < 3.0f)//거리 조정해주기
@@ -70,7 +87,9 @@ public class EnemyAI : MonoBehaviour
                 break;
 
             case State.Trace:
-                enemyAnim.SetTrigger("Trace");//애니메이션 변경
+                //enemyAnim.SetTrigger("Trace");//애니메이션 변경
+                anime.CrossFade(trace.name, 0.3f);
+
                 //플레이어 위치를 인식해 다가온다
                 //유령의 경우 순간이동하며 아닐 경우 서서히 이동한다
                 if (this.name.Contains("ghost"))
@@ -97,10 +116,14 @@ public class EnemyAI : MonoBehaviour
                 break;
 
             case State.Return:
+                anime.CrossFade(returned.name, 0.3f);
+
                 returnToStart();
                 break;
 
             case State.Casting:
+                anime.CrossFade(casting.name, 0.3f);
+
                 skillCast();
 
                 break;
@@ -110,9 +133,21 @@ public class EnemyAI : MonoBehaviour
 
                 break;
             case State.Hit:
+                int hitType = UnityEngine.Random.Range(0, 1);
+
+                if (hitType == 0)
+                {
+                    anime.CrossFade(hit1.name, 0.1f);
+                }
+                else
+                {
+                    anime.CrossFade(hit2.name, 0.1f);
+                }
+
                 break;
             case State.Die:
-                enemyAnim.SetTrigger("Die");
+                //enemyAnim.SetTrigger("Die");
+                anime.CrossFade(die.name, 0.3f);
                 //적이 사망할 시 일정시간(2초) 이후 삭제한다
                 Destroy(this, 2.0f);
                 break;
@@ -126,13 +161,16 @@ public class EnemyAI : MonoBehaviour
         switch (num)
         {
             case 1:
-                enemyAnim.SetTrigger("Attack1");
+                //enemyAnim.SetTrigger("Attack1");
+                anime.CrossFade(attack1.name, 0.3f);
                 break;
             case 2:
-                enemyAnim.SetTrigger("Attack2");
+                //enemyAnim.SetTrigger("Attack2");
+                anime.CrossFade(attack2.name, 0.3f);
                 break;
             case 3:
-                enemyAnim.SetTrigger("Attack3");
+                //enemyAnim.SetTrigger("Attack3");
+                anime.CrossFade(attack3.name, 0.3f);
                 break;
         }
     }
