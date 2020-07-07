@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
-{
+{ 
+    EInfo eInfo;            //몬스터 정보 구조체 불러오기
+
     EnemyInfo enemyInfo;        //적 정보를 담은 클래스 불러오기
     [SerializeField] GameObject player;   //거리계산을 위한 플레이어
     Vector3 startPoint;         //몬스터 시작지점
