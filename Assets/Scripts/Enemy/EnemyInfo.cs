@@ -14,14 +14,9 @@ struct EInfo
     public float attDistance;   //공격인식범위
 }
 
-public enum monsterType
-{
-    caster, warrior
-}
-
 class EnemyInfo:MonoBehaviour
 {
-    public void SetWarriorSk(int hp, int att, int def, float cast, float sp, float dist, float adist)
+    public void SetWSk(int hp, int att, int def, float cast, float sp, float dist, float adist)
     {
         hp = 30;
         att = 10;
@@ -32,7 +27,7 @@ class EnemyInfo:MonoBehaviour
         adist = 1.5f;
     }
 
-    public void SetWarriorSA(int hp, int att, int def, float cast, float sp, float dist, float adist)
+    public void SetASk(int hp, int att, int def, float cast, float sp, float dist, float adist)
     {
         hp = 20;
         att = 15;
@@ -100,6 +95,17 @@ class EnemyInfo:MonoBehaviour
         cast = 3.0f;
         sp = 10.0f;
         dist = 20.0f;
+        adist = 1.5f;
+    }
+
+    public void SetZombie(int hp, int att, int def, float cast, float sp, float dist, float adist)
+    {
+        hp = 60;
+        att = 10;
+        def = 5;
+        cast = 2.0f;
+        sp = 2.0f;
+        dist = 5.0f;
         adist = 1.5f;
     }
 

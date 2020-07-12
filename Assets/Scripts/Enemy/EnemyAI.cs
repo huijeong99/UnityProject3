@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyAI : MonoBehaviour
-{ 
+{
     EInfo eInfo;            //몬스터 정보 구조체 불러오기
+
+    
 
     EnemyInfo enemyInfo;        //적 정보를 담은 클래스 불러오기
     [SerializeField] GameObject player;   //거리계산을 위한 플레이어
@@ -58,18 +61,67 @@ public class EnemyAI : MonoBehaviour
         anime.Play();
 
         state = State.Idle;
+
+        SetEnemy();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            
+        }
         setAction();
+    }
+
+    private void SetEnemy()
+    {
+        if (gameObject.name.Contains("warrior"))
+        {
+            enemyInfo.SetWSk(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("archer"))
+        {
+            enemyInfo.SetASk(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("dragon"))
+        {
+            enemyInfo.SetDragon(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("ghost"))
+        {
+            enemyInfo.SetGhost(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("mummy"))
+        {
+            enemyInfo.SetMummy(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("orc"))
+        {
+            enemyInfo.SetOrc(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("werewolf"))
+        {
+            enemyInfo.SetWolf(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
+
+        else if (gameObject.name.Contains("zombie"))
+        {
+            enemyInfo.SetZombie(eInfo.HP, eInfo.attack, eInfo.defend, eInfo.castingTime, eInfo.speed, eInfo.distance, eInfo.attDistance);
+        }
     }
 
     private void setAction()
     {
         //상태와 무관하게 HP가 0이 될 경우 죽는다
-        if (enemyInfo.getHP() <= 0)
+        if (eInfo.HP <= 0)
         {
             state = State.Die;
         }
@@ -77,19 +129,16 @@ public class EnemyAI : MonoBehaviour
         switch (state)
         {
             case State.Idle:
-                //enemyAnim.SetTrigger("Idle");
                 anime.CrossFade(idle.name, 0.3f);
-                //print(enemyInfo.getDistance());
 
                 //플레이어가 일정 거리 내에 존재할 경우 추적한다
-                if (Vector3.Distance(player.transform.position, transform.position) < 3.0f)//거리 조정해주기
+                if (Vector3.Distance(player.transform.position, transform.position) < 5.0f)//거리 조정해주기
                 {
                     state = State.Trace;
                 }
                 break;
 
             case State.Trace:
-                //enemyAnim.SetTrigger("Trace");//애니메이션 변경
                 anime.CrossFade(trace.name, 0.3f);
 
                 //플레이어 위치를 인식해 다가온다
@@ -105,16 +154,17 @@ public class EnemyAI : MonoBehaviour
                 }
 
                 //추적 후 일정 거리 내에 들어왔을 경우 캐스팅한다
-                if (enemyInfo.getType() == (int)monsterType.caster)
-                {
-                    state = State.Casting;
-                }
+                //if (enemyInfo.getType() == (int)monsterType.caster)
+                //{
+                //    state = State.Casting;
+                //}
+                //
+                ////추적 후 일정 거리 내에 들어왔을 경우 공격한다
+                //if (enemyInfo.getType() == (int)monsterType.warrior)
+                //{
+                //    state = State.Attack;
+                //}
 
-                //추적 후 일정 거리 내에 들어왔을 경우 공격한다
-                if (enemyInfo.getType() == (int)monsterType.warrior)
-                {
-                    state = State.Attack;
-                }
                 break;
 
             case State.Return:
@@ -148,10 +198,9 @@ public class EnemyAI : MonoBehaviour
 
                 break;
             case State.Die:
-                //enemyAnim.SetTrigger("Die");
                 anime.CrossFade(die.name, 0.3f);
-                //적이 사망할 시 일정시간(2초) 이후 삭제한다
-                Destroy(this, 2.0f);
+                //적이 사망할 시 일정시간(4초) 이후 삭제한다
+                Destroy(this.gameObject,0.9f);
                 break;
         }
     }
@@ -200,7 +249,7 @@ public class EnemyAI : MonoBehaviour
         state = State.Casting;
 
         //시작 위치에서 지나치게 벗어났을 경우 원래 위치로 돌아간다
-        if (Vector3.Distance(transform.position, startPoint) > enemyInfo.getDistance())
+        if (Vector3.Distance(transform.position, startPoint) > eInfo.distance)
         {
             state = State.Return;
         }
@@ -214,12 +263,12 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(player.transform.position);    //플레이어 추적
 
         //시작 위치에서 지나치게 벗어났을 경우 원래 위치로 돌아간다
-        if (Vector3.Distance(transform.position, startPoint) > enemyInfo.getDistance())
+        if (Vector3.Distance(transform.position, startPoint) > 5.0f)
         {
             state = State.Return;
         } 
         //플레이어가 공격범위 내로 들어왔을 경우 공격상태로 전환한다
-        else if (Vector3.Distance(transform.position, player.transform.position) < enemyInfo.getAttDistance())
+        else if (Vector3.Distance(transform.position, player.transform.position) < 1.2f)
         {
             state = State.Attack;
         }
@@ -238,7 +287,7 @@ public class EnemyAI : MonoBehaviour
     {
         currCastingTime += 0.1f;//캐스팅 시전 시작
 
-        if (currCastingTime > enemyInfo.getCastingTime())
+        if (currCastingTime > eInfo.castingTime)
         {
             state = State.Attack;//캐스팅 종료시 공격상태로 바꾼다
             currCastingTime = 0;

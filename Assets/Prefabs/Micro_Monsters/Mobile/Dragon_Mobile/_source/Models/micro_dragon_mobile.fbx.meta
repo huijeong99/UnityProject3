@@ -74,7 +74,8 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
-    rigImportErrors: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'LeftUpperLeg' not found\n"
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -82,7 +83,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -624,7 +625,82 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: micro_dragon_mobile(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon
+      parentName: micro_dragon_mobile(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:root_drag
+      parentName: micro_dragon_mobile(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:body_drag
+      parentName: micro_dragon_clean:root_drag
+      position: {x: -0, y: 0.22299345, z: -0.01472573}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:tail_drag
+      parentName: micro_dragon_clean:body_drag
+      position: {x: 0.017850727, y: -0.047926273, z: -0.48072365}
+      rotation: {x: -0.13023512, y: -0.14913975, z: -0.01981959, w: 0.9800017}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:right_shoulder_drag
+      parentName: micro_dragon_clean:body_drag
+      position: {x: 0.5614752, y: 0.32754746, z: -0.047867727}
+      rotation: {x: -0, y: 0.06954438, z: 0.5762772, w: 0.81429005}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:right_arm_drag
+      parentName: micro_dragon_clean:right_shoulder_drag
+      position: {x: 0.015793838, y: -0.26658764, z: 0.03217145}
+      rotation: {x: 0.002740619, y: -0, z: -0, w: 0.99999624}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:left_shoulder_drag
+      parentName: micro_dragon_clean:body_drag
+      position: {x: -0.5614752, y: 0.32754746, z: -0.047867727}
+      rotation: {x: -0, y: -0.06954438, z: -0.5762772, w: 0.81429005}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:left_arm_drag
+      parentName: micro_dragon_clean:left_shoulder_drag
+      position: {x: -0.015793838, y: -0.26658764, z: 0.03217145}
+      rotation: {x: -0.021103108, y: 0, z: -0, w: 0.9997773}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:head_drag
+      parentName: micro_dragon_clean:body_drag
+      position: {x: -0, y: 0.37763366, z: -0.04502251}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:brows_drag
+      parentName: micro_dragon_clean:head_drag
+      position: {x: -0, y: 0.4305527, z: 0.40544435}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:eyes_drag
+      parentName: micro_dragon_clean:head_drag
+      position: {x: -0, y: 0.0990879, z: 0.08028246}
+      rotation: {x: 0.040844627, y: -0.003066846, z: 0.02220548, w: 0.99891406}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:left_wing_drag
+      parentName: micro_dragon_clean:head_drag
+      position: {x: -0.39212558, y: 0.36545458, z: -0.19597048}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:snout_drag
+      parentName: micro_dragon_clean:head_drag
+      position: {x: 0.0013866104, y: -0.071678944, z: 0.5167375}
+      rotation: {x: -0.062000666, y: -0.01590513, z: 0.01658956, w: 0.9978115}
+      scale: {x: 1, y: 1, z: 1}
+    - name: micro_dragon_clean:right_wing_drag
+      parentName: micro_dragon_clean:head_drag
+      position: {x: 0.39208472, y: 0.36542636, z: -0.1960993}
+      rotation: {x: 0, y: 0, z: 0.00623542, w: 0.99998057}
+      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -639,9 +715,9 @@ ModelImporter:
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 3
+  animationType: 1
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
