@@ -42,7 +42,5 @@ public class EnemyHPBar : MonoBehaviour
             uiCamera, out localPos);
 
         rectHP.localPosition = localPos;
-
-    https://www.youtube.com/watch?v=MO_XEHGzDLM
     }
 }
