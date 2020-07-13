@@ -109,7 +109,7 @@ public class EnemyAI : MonoBehaviour
             eInfo.castingTime = 0.0f;
             eInfo.speed = 5.0f;
             eInfo.distance = 10.0f;
-            eInfo.attDistance = 1.5f;
+            eInfo.attDistance = 0.5f;
         }
 
         else if (gameObject.name.Contains("archer"))
@@ -130,7 +130,7 @@ public class EnemyAI : MonoBehaviour
             eInfo.defend = 30;
             eInfo.castingTime = 3.0f;
             eInfo.speed = 6.0f;
-            eInfo.distance = 5.0f;
+            eInfo.distance = 7.0f;
             eInfo.attDistance = 2.0f;
         }
 
@@ -152,8 +152,8 @@ public class EnemyAI : MonoBehaviour
             eInfo.defend = 5;
             eInfo.castingTime = 4.0f;
             eInfo.speed = 1.0f;
-            eInfo.distance = 2.0f;
-            eInfo.attDistance = 1.5f;
+            eInfo.distance = 4.0f;
+            eInfo.attDistance = 1.0f;
         }
 
         else if (gameObject.name.Contains("orc"))
@@ -163,8 +163,8 @@ public class EnemyAI : MonoBehaviour
             eInfo.defend = 50;
             eInfo.castingTime = 6.0f;
             eInfo.speed = 3.0f;
-            eInfo.distance = 3.0f;
-            eInfo.attDistance = 2.0f;
+            eInfo.distance = 6.0f;
+            eInfo.attDistance = 1.0f;
         }
 
         else if (gameObject.name.Contains("werewolf"))
@@ -175,7 +175,7 @@ public class EnemyAI : MonoBehaviour
             eInfo.castingTime = 3.0f;
             eInfo.speed = 10.0f;
             eInfo.distance = 20.0f;
-            eInfo.attDistance= 1.5f;
+            eInfo.attDistance = 1.0f;
         }
 
         else if (gameObject.name.Contains("zombie"))
@@ -185,8 +185,8 @@ public class EnemyAI : MonoBehaviour
             eInfo.defend = 5;
             eInfo.castingTime = 2.0f;
             eInfo.speed = 2.0f;
-            eInfo.distance = 5.0f;
-            eInfo.attDistance = 1.5f;
+            eInfo.distance = 8.0f;
+            eInfo.attDistance = 1.0f;
         }
 
         else
@@ -205,7 +205,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         //플레이어가 일정 거리 내에 존재할 경우 추적한다
-        if (Vector3.Distance(player.transform.position, transform.position) < eInfo.distance)//거리 조정해주기
+        if (Vector3.Distance(player.transform.position, transform.position) < eInfo.distance/2)//거리 조정해주기
         {
             state = State.Trace;
         }
@@ -267,11 +267,11 @@ public class EnemyAI : MonoBehaviour
                 break;
 
             case State.Trace:
-                anime.CrossFade(trace.name, 0.3f);
+                StartCoroutine(followPlayer());
                 break;
 
             case State.Return:
-                anime.CrossFade(returned.name, 0.3f);
+                StartCoroutine(returnToStart());
                 break;
 
             case State.Casting:
@@ -343,32 +343,37 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    //유령 제외 이동처리
-    private void followPlayer()
-    {
-        if (!agent.enabled) { agent.enabled = true; }   //에이전트가 비활성상태일 경우 활성화시켜준다
 
+    public IEnumerator followPlayer()
+    {
+        anime.CrossFade(trace.name, 0.3f);
+
+        if (!agent.enabled) { agent.enabled = true; }   //에이전트가 비활성상태일 경우 활성화시켜준다
         agent.SetDestination(player.transform.position);    //플레이어 추적
 
-        //추적 후 일정 거리 내에 들어왔을 경우 캐스팅한다
-        //if (enemyInfo.getType() == (int)monsterType.caster)
-        //{
-        //    state = State.Casting;
-        //}
-        //
-        ////추적 후 일정 거리 내에 들어왔을 경우 공격한다
-        //if (enemyInfo.getType() == (int)monsterType.warrior)
-        //{
-        //    state = State.Attack;
-        //}
+        yield return 3.0f;
     }
 
-    //시작 지점으로 돌아가기
-    private void returnToStart()
+    public IEnumerator returnToStart()
     {
+        anime.CrossFade(returned.name, 0.3f);
         if (!agent.enabled) { agent.enabled = true; }
 
         agent.SetDestination(startPoint);
+
+        if (transform.position == startPoint)
+        {
+            if (agent.enabled) { agent.enabled = false; }
+            transform.position = startPoint;
+            state = State.Idle;
+        }
+
+        yield return 3.0f;
+    }
+
+    public IEnumerator attackPlayer()
+    {
+        yield return 3.0f;
     }
 
     //스킬 캐스팅
