@@ -408,4 +408,9 @@ public class EnemyAI : MonoBehaviour
         //HP변화 적용해주기
         hpBarImage.fillAmount = 3.0f / eInfo.HP;
     }
+
+    public int getState()
+    {
+        return (int)state;
+    }
 }

@@ -19,6 +19,7 @@ struct PInfo
 public class PlayerCtrl : MonoBehaviour
 {
     PInfo playerInfo;   //플레이어 정보
+    setPlayer sPlayer = null;  //임의적으로 플레이어 데이터를 가져오기 위해 가져올 클래스
     public Transform SponPosition;     //플레이어가 스폰될 초기위치
 
     public Image playerHP;
@@ -31,6 +32,7 @@ public class PlayerCtrl : MonoBehaviour
 
     //플레이어 움직임
     public Vector2 margin;  //뷰포트 좌표
+    Vector3 dir;
 
     public VariableJoystick joystick;
     public RectTransform backGround;    //조이스틱 백그라운드
@@ -45,8 +47,8 @@ public class PlayerCtrl : MonoBehaviour
 
     //중력적용
     public float gravity = -20;
-    float velocityY;    //낙하속도(벨로시티는 방향과 힘을 들고 있다)
-    float jumpPower = 10; //점프파워
+    float velocityY=0;    //낙하속도(벨로시티는 방향과 힘을 들고 있다)
+    float jumpPower = 10.0f; //점프파워
     int jumpCount = 0; //점프카운트
 
     CharacterController cc;
@@ -78,16 +80,18 @@ public class PlayerCtrl : MonoBehaviour
 
     private void Awake()
     {
-        setPlayer sPlayer=null;  //임의적으로 플레이어 데이터를 가져오기 위해 가져올 클래스
-        sPlayer = new Knight();
+        loadPlayer();
+    }
 
+    private void loadPlayer()
+    {
         //현재 활성화 되어있는 플레이어의 애니메이터만 가져오기
         for (int i = 0; i < playerChar.Count; i++)
         {
             if (playerChar[i].activeSelf == true)
             {
                 Anim = playerChar[i].GetComponent<Animator>();
-        
+
                 //활성화된 플레이어의 이름에 따라 플레이어 정보 불러오기
                 switch (playerChar[i].name)
                 {
@@ -142,8 +146,10 @@ public class PlayerCtrl : MonoBehaviour
         SetAnimation();     //애니메이션 세팅
         playerHPBar();
         playerEXPBar();
+        if (Input.GetKeyDown(KeyCode.Tab)){
+            playerSwitching();
+        }
     }
-
 
     private void Move()
     {
@@ -160,31 +166,39 @@ public class PlayerCtrl : MonoBehaviour
         }
 
 
-        Vector3 dir = new Vector3(h, 0, v);//3차원 이동
+        dir = new Vector3(h, 0, v);//3차원 이동
 
         dir = Camera.main.transform.TransformDirection(dir);
         //transform.position += dir * speed * Time.deltaTime;
 
 
-        //점프안됨 수정필요함
-        if (cc.collisionFlags == CollisionFlags.Below)
+
+        if (Input.GetButtonDown("Jump"))
         {
-            velocityY = 0;
-            jumpCount = 0;
-        }
-        else
-        {
-            //땅에 닿지 않은 상태이기때문에 중력적용하기
-            velocityY += gravity * Time.deltaTime;
-            dir.y = velocityY;
-        }
-        if (Input.GetButtonDown("Jump") && jumpCount < 2)
-        {
-            jumpCount++;
-            velocityY = jumpPower;
+            jump();
         }
 
+        if (cc.isGrounded == true)
+        {
+            jumpCount = 0;
+            velocityY = 0;
+        }
+
+        dir.y = velocityY;
+        velocityY += gravity * Time.deltaTime;
+
         cc.Move(dir * playerInfo.sp * distance * Time.deltaTime);
+    }
+
+    //점프
+    public void jump()
+    {
+        if (jumpCount < 2)
+        {
+            velocityY = jumpPower;
+
+            jumpCount++;
+        }
     }
 
     //회전
@@ -227,10 +241,7 @@ public class PlayerCtrl : MonoBehaviour
         //기본공격
         if (Input.GetMouseButtonDown(0))
         {
-            state = State.Attack;
-
-            if (attackCount == 0) { attackCount++; }
-            else { attackCount = 0; }
+            BasicAttack();
         }
 
         //공격1(숫자 1키)
@@ -246,6 +257,14 @@ public class PlayerCtrl : MonoBehaviour
         }
 
         //적과 충돌할시 hit
+    }
+
+    public void BasicAttack()
+    {
+        state = State.Attack;
+
+        if (attackCount == 0) { attackCount++; }
+        else { attackCount = 0; }
     }
 
     //애니매이션 설정
@@ -293,4 +312,39 @@ public class PlayerCtrl : MonoBehaviour
         playerEXP.fillAmount = playerInfo.currExp / playerInfo.maxExp;
         leftEXP.text = playerInfo.currExp + "/" + playerInfo.maxExp;
     }
+
+    public void playerSwitching()
+    {
+        for(int i = 0; i < playerChar.Count; i++)
+        {
+            if (playerChar[i].activeSelf == true)
+            {
+                if (i+1 >= playerChar.Count)
+                {
+                    playerChar[0].SetActive(true);
+                }
+                else
+                {
+                    playerChar[i + 1].SetActive(true);
+
+                }
+                
+                playerChar[i].SetActive(false);
+                loadPlayer();
+            }
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        ////몬스터에게 공격받았을 때 HP감소
+        //    if (hit.collider.gameObject.tag.Contains("EWeapon"))
+        //    {
+        //       playerInfo.HP-=
+        //    }
+        //
+        
+    }
+
+
 }

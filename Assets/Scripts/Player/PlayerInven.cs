@@ -23,6 +23,6 @@ public class PlayerInven : MonoBehaviour
 
     private void showMoney()
     {
-        
+        playerMoney.text = " "+money;
     }
 }
