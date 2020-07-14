@@ -3,22 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 struct PInfo
 {
+    public float HP;
     public int lv;
     public int maxExp;
     public int currExp;
     public int attack;
     public int defend;
     public float sp;
-
 }
 
 public class PlayerCtrl : MonoBehaviour
 {
     PInfo playerInfo;   //플레이어 정보
     public Transform SponPosition;     //플레이어가 스폰될 초기위치
+
+    public Image playerHP;
+    public TextMeshProUGUI leftHP;
+    float maxHP;
+
+    public TextMeshProUGUI currLevel;
+    public Image playerEXP;
+    public TextMeshProUGUI leftEXP;
 
     //플레이어 움직임
     public Vector2 margin;  //뷰포트 좌표
@@ -45,7 +54,7 @@ public class PlayerCtrl : MonoBehaviour
     //플레이어 애니메이션
     enum State
     {
-        Idle, Walk, Run, Attack1, Attack2, Hit, Die
+        Idle, Walk, Run, Attack, SkillA,SkillB, Hit, Die
     }
     State state;            //플레이어 기본 상태
     enum DebuffState
@@ -56,6 +65,16 @@ public class PlayerCtrl : MonoBehaviour
 
     public List<GameObject> playerChar = new List<GameObject>();  //조정할 플레이어 모델
     Animator Anim;          //플레이어 애니메이션
+    int attackCount = 0;
+
+
+    //플레이어 스킬 세팅
+    public List<Image> attackImg;
+    public List<Image> skillAImg;
+    public List<Image> skillBImg;
+    public Image attImagTap;
+    public Image skATap;
+    public Image skBTap;
 
     private void Awake()
     {
@@ -74,18 +93,29 @@ public class PlayerCtrl : MonoBehaviour
                 {
                     case "knight"://대문자에 주의할것
                         sPlayer = new Knight();
+                        attImagTap.sprite = attackImg[0].sprite;
+                        skATap.sprite = skillAImg[0].sprite;
+                        skBTap.sprite = skillBImg[0].sprite;
                         break;
                     case "Magician":
                         sPlayer = new Magician();
+                        attImagTap.sprite = attackImg[1].sprite;
+                        skATap.sprite = skillAImg[1].sprite;
+                        skBTap.sprite = skillBImg[1].sprite;
                         break;
                     case "Priest":
                         sPlayer = new Priest();
+                        attImagTap.sprite = attackImg[2].sprite;
+                        skATap.sprite = skillAImg[2].sprite;
+                        skBTap.sprite = skillBImg[2].sprite;
                         break;
                 }
             }
         }
-       
+
         //사전에 정해진 플레이어 데이터 삽입
+        playerInfo.HP = sPlayer.getHP();
+        maxHP = playerInfo.HP;
         playerInfo.lv = sPlayer.getlv();
         playerInfo.maxExp = sPlayer.getmaxExp();
         playerInfo.currExp = sPlayer.getcurrExp();
@@ -110,7 +140,10 @@ public class PlayerCtrl : MonoBehaviour
         Rotate();   //회전 처리
         FindAnimation();    //애니메이션 찾기
         SetAnimation();     //애니메이션 세팅
+        playerHPBar();
+        playerEXPBar();
     }
+
 
     private void Move()
     {
@@ -191,16 +224,25 @@ public class PlayerCtrl : MonoBehaviour
             state = State.Run;
         }
 
+        //기본공격
+        if (Input.GetMouseButtonDown(0))
+        {
+            state = State.Attack;
+
+            if (attackCount == 0) { attackCount++; }
+            else { attackCount = 0; }
+        }
+
         //공격1(숫자 1키)
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            state = State.Attack1;
+            state = State.SkillA;
         }
 
         //공격2(숫자 2키)
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            state = State.Attack2;
+            state = State.SkillB;
         }
 
         //적과 충돌할시 hit
@@ -220,11 +262,15 @@ public class PlayerCtrl : MonoBehaviour
             case State.Run:
                 Anim.SetTrigger("Run");
                 break;
-            case State.Attack1:
-                Anim.SetTrigger("Attack1");
-                break;
-            case State.Attack2:
-                Anim.SetTrigger("Attack2");
+            case State.Attack:
+                if (attackCount == 0)
+                {
+                    Anim.SetTrigger("Attack1");
+                }
+                else
+                {
+                    Anim.SetTrigger("Attack2");
+                }
                 break;
             case State.Hit:
                 Anim.SetTrigger("Hit");
@@ -235,9 +281,16 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
-    //지금은 안씀
-    //public int playerLvSetting()
-    //{
-    //    return playerInfo.lv;
-    //}
+    private void playerHPBar()
+    {
+        playerHP.fillAmount = playerInfo.HP / maxHP;
+        leftHP.text =playerInfo.HP + "/" +maxHP ;
+    }
+
+    private void playerEXPBar()
+    {
+        currLevel.text = "LV. " + playerInfo.lv;
+        playerEXP.fillAmount = playerInfo.currExp / playerInfo.maxExp;
+        leftEXP.text = playerInfo.currExp + "/" + playerInfo.maxExp;
+    }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class setPlayer : MonoBehaviour
 {
+    public abstract float getHP();
     public abstract int getlv();
     public abstract int getmaxExp();
     public abstract int getcurrExp();
@@ -15,6 +16,11 @@ public abstract class setPlayer : MonoBehaviour
 
 public class Knight : setPlayer
 {
+    public override float getHP()
+    {
+        return 100;
+    }
+
     public override int getlv()
     {
         return 1;
@@ -48,6 +54,11 @@ public class Knight : setPlayer
 
 public class Magician : setPlayer
 {
+    public override float getHP()
+    {
+        return 80;
+    }
+
     public override int getlv()
     {
         return 1;
@@ -81,6 +92,11 @@ public class Magician : setPlayer
 
 public class Priest : setPlayer
 {
+    public override float getHP()
+    {
+        return 70;
+    }
+
     public override int getlv()
     {
         return 1;
